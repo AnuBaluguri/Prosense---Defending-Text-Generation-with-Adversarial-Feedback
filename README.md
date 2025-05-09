@@ -1,10 +1,10 @@
 # Prosense: Defending Text Generation with Adversarial Feedback
 
-Prosense is a multi-stage training framework designed to improve the robustness of large language models (LLMs) against adversarial inputs. It fine-tunes quantized LLMs using clean and adversarially augmented datasets, evaluates model performance via structured reasoning, and iteratively refines the model through curriculum-based adversarial feedback.
+Prosense is a multi-stage training framework designed to improve the robustness of large language models (LLMs) against adversarial inputs. It fine-tunes quantized LLMs using clean and adversarially augmented datasets, evaluates model performance via reasoning-based judgments, and refines the model through structured adversarial feedback using **Graph-of-Thought (GOT)** parsing.
 
 > 🚀 **Model Base**: `unsloth/mistral-7b-bnb-4bit`  
-> 🧠 **Goal**: Improve response truthfulness and adversarial resilience via multi-stage fine-tuning  
-> 🧪 **Datasets**: Open-Instruct, TruthfulQA
+> 🧠 **Goal**: Increase factuality and robustness through adversarial feedback  
+> 🧪 **Datasets**: Open-Instruct, TruthfulQA, GOT-parsed failures
 
 ---
 
@@ -22,74 +22,97 @@ Prosense-Adversarial-Robustness/
 │   └── Phase2_Final.ipynb
 │
 ├── Phase3_Evaluation_Parsing/
-│   ├── Phase2_Model_Responses_Collection_Code.ipynb
-│   ├── Parsing_GOT_Style_By_Llama_Code.ipynb
+│   ├── Phase3_1_Collect_TruthfulQA_Responses.ipynb
+│   ├── Phase3_2_Judge_and_Filter_Failures.ipynb
+│   ├── Phase3_3_Parse_GOT_Graph_By_LLaMA.ipynb
 │   └── Phase3_Final.ipynb
 │
 └── Phase3_Level2_Refinement/
-    ├── Level1_Model_Responses_Collection_Code.ipynb
-    ├── Level1_Model_Responses_Judging&Parsing_Llama_Code.ipynb
-    ├── Phase3_Level2_Finetuning_Code.ipynb
-    ├── Phase3_Level2_Model_Responses_Collection_Code.ipynb
-    └── Reasoning_graphs.ipynb
+    ├── Phase4_1_Collect_Level1_Responses.ipynb
+    ├── Phase4_2_Judge_Parse_Level1_By_LLaMA.ipynb
+    ├── Phase4_3_Level2_Finetune.ipynb
+    ├── Phase4_4_Collect_Level2_Responses.ipynb
+    ├── Phase4_5_Judge_Level2_Responses.ipynb
+    └── Phase4_6_Reasoning_Graph_Visualization.ipynb
 ```
 
 ---
 
-## 📌 Methodology & Pipeline
+## 📌 Methodology Overview
 
 ### 🔹 Phase 1 – Baseline Fine-Tuning
-Fine-tunes a 4-bit quantized Mistral-7B model using the Open-Instruct dataset.  
-Includes preprocessing, tokenization, and model checkpoint saving.
+Fine-tunes Mistral-7B (4-bit quantized) on the Open-Instruct dataset.
 
-> Output: `mistral-prosense-clean` (baseline model)
+> ✅ Output: `mistral-prosense-clean` – Clean model baseline
 
 ---
 
 ### 🔹 Phase 2 – Adversarial Hybrid Fine-Tuning
-Generates adversarial examples using perturbation-based attacks, merges them with clean samples, and retrains the model on this hybrid dataset.
+- Generates adversarial examples from clean data
+- Merges clean + adversarial sets
+- Re-trains model to enhance robustness
 
-> Output: `mistral-prosense-hybrid` (model trained on mixed data)
-
----
-
-### 🔹 Phase 3 – Evaluation, Parsing, and CoT Fine-Tuning
-Evaluates the hybrid model on TruthfulQA, collects failed responses, and uses LLaMA to parse them into Chain-of-Thought (CoT) style structured reasoning. This data is used to fine-tune the model further.
-
-> Output: `mistral-prosense-parsed` (CoT-refined model)
+> ✅ Output: `mistral-prosense-hybrid` – Robustness-enhanced model
 
 ---
 
-### 🔹 Phase 3 Again – Level 2 Feedback and Final Evaluation
-Repeats evaluation and parsing on the Level 1 model, followed by one more round of fine-tuning and final performance judging. Also generates reasoning graphs for qualitative analysis.
+### 🔹 Phase 3 – TruthfulQA Evaluation + GOT Parsing
+- Evaluates the hybrid model on TruthfulQA
+- Judges failed samples with another LLM (Gemma or LLaMA)
+- Parses failures into **Graph-of-Thought (GOT)** reasoning format
+- Fine-tunes again using these structured reasoning examples
 
-> Output: Final `mistral-finetuning-again` + reasoning graph insights
+> ✅ Output: `mistral-prosense-parsed` – GOT-aware model
 
 ---
 
-## 🛠️ Dependencies
+### 🔹 Phase 3 Again – Level 2 Feedback Cycle
+- Re-evaluates the parsed model (Level 1)
+- Parses second round of failed cases
+- Final fine-tuning with deeper feedback
+- Visualizes reasoning improvement via GOT graphs
 
-Create a new environment and install these key packages:
+> ✅ Output: `mistral-finetuning-again` – Final robust model
+
+---
+
+## ⚙️ Dependencies
+
+Install required packages:
 
 ```bash
-pip install transformers accelerate datasets bitsandbytes unsloth
-pip install textattack  # or OpenAttack if used
+pip install transformers accelerate datasets bitsandbytes unsloth textattack torch
 ```
 
-Python ≥ 3.10 is recommended. GPU with 24GB+ VRAM for fine-tuning.
+> Python 3.10+ and a 24GB+ VRAM GPU are recommended for fine-tuning.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to Run
 
-1. **Clone the repository**  
-   `git clone https://github.com/your-username/Prosense-Adversarial-Robustness.git`
+Run notebooks in order:
 
-2. **Set up your environment**  
-   Install the dependencies listed above or use a `requirements.txt`.
+### Phase 1: Clean Fine-Tuning
+1. `phase1.ipynb`
 
-3. **Run each phase**  
-   Open and run the Jupyter notebooks in sequence, starting from Phase 1.
+### Phase 2: Adversarial Training
+2. `HybridDataCreation.ipynb`
+3. `MergingWithHybridDataset.ipynb`
+4. `Phase2_Final.ipynb`
+
+### Phase 3: Evaluation + GOT Parsing
+5. `Phase3_1_Collect_TruthfulQA_Responses.ipynb`
+6. `Phase3_2_Judge_and_Filter_Failures.ipynb`
+7. `Phase3_3_Parse_GOT_Graph_By_LLaMA.ipynb`
+8. `Phase3_Final.ipynb`
+
+### Phase 4: Level 2 Feedback Cycle
+9. `Phase4_1_Collect_Level1_Responses.ipynb`
+10. `Phase4_2_Judge_Parse_Level1_By_LLaMA.ipynb`
+11. `Phase4_3_Level2_Finetune.ipynb`
+12. `Phase4_4_Collect_Level2_Responses.ipynb`
+13. `Phase4_5_Judge_Level2_Responses.ipynb`
+14. `Phase4_6_Reasoning_Graph_Visualization.ipynb`
 
 ---
 
@@ -101,8 +124,10 @@ You can add metrics here if you tracked model performance across stages, such as
 
 ---
 
-
 ## 📄 License
 
-This project is intended for academic and research use. Please cite appropriately if you reuse or adapt this pipeline.
+This project is licensed under the [MIT License](LICENSE).  
+Feel free to use, adapt, or distribute with proper attribution.
+
+---
 
