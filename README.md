@@ -1,7 +1,7 @@
 # Prosense: Defending Text Generation with Adversarial Feedback
 
 <p align="center">
-  <img src="assets/banner.png" width="100%">
+  <img src="assets/banner.png" width="75%">
 </p>
 
 ## Overview
