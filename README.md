@@ -116,7 +116,7 @@ Run notebooks in order:
 
 ---
 
-## 📊 Evaluation Results (Optional)
+## 📊 Evaluation Results 
 You can add metrics here if you tracked model performance across stages, such as:
 
 - TruthfulQA Pass Rate: 35% → 55% (Post Phase 3)
