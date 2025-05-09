@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Hidden system files
+.DS_Store
+Thumbs.db
+
+# Model files and large artifacts
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.h5
+*.zip
+*.tar.gz
+
+# Tokenized datasets and outputs
+tokenized_*/
+*.json
+*.jsonl
+
+# VSCode settings (optional)
+.vscode/
